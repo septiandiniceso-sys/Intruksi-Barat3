@@ -100,9 +100,19 @@
     .progress-fill { height: 100%; background: #16a34a; transition: width 0.5s ease; }
     .checklist-item { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px; margin-bottom: 12px; }
     .checklist-upload-area { margin-top: 10px; padding-top: 10px; border-top: 1px dashed #d1d5db; }
-    .matrix-table th { font-size: 0.75rem; text-align: center; color: #6b7280; }
-    .matrix-cell { width: 25px; height: 25px; border-radius: 4px; display: inline-block; margin: 1px; border: 1px solid rgba(0,0,0,0.05); }
-    .mc-hadir { background-color: #16a34a; } .mc-libur { background-color: #eab308; } .mc-alfa { background-color: #b91c1c; } .mc-null { background-color: #e5e7eb; }
+    .matrix-table th { font-size: 0.72rem; text-align: center; color: #4b5563; padding: 5px 3px !important; }
+    .matrix-table td { padding: 3px 2px !important; vertical-align: middle; text-align: center; }
+    .matrix-sticky-col { position: sticky; left: 0; background: #ffffff !important; z-index: 2; text-align: left !important; padding-left: 10px !important; padding-right: 8px !important; border-right: 1px solid #e5e7eb; box-shadow: 2px 0 4px rgba(0,0,0,0.04); }
+    .matrix-cell { min-width: 52px; height: 26px; padding: 0 5px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 800; letter-spacing: 0.2px; cursor: pointer; white-space: nowrap; transition: transform 0.15s; border: 1.5px solid transparent; }
+    .matrix-cell:active { transform: scale(0.94); }
+    .mc-hadir { background-color: #16a34a; color: #ffffff; }
+    .mc-beda { background-color: #16a34a; color: #ffffff; border: 2px solid #f59e0b !important; box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.35); }
+    .mc-libur { background-color: #eab308; color: #111827; }
+    .mc-alfa { background-color: #b91c1c; color: #ffffff; }
+    .mc-rencana { background-color: #f3f4f6; color: #374151; border: 1px dashed #cbd5e1; }
+    .mc-rencana-libur { background-color: #fef9c3; color: #854d0e; border: 1px dashed #eab308; }
+    .mc-rencana-so { background-color: #eff6ff; color: #1d4ed8; border: 1px dashed #93c5fd; }
+    .mc-null { background-color: #e5e7eb; color: #6b7280; }
     @media print { .print-hide, .bottom-nav { display: none !important; } #paneHistory, #paneRiwayat { display: block !important; } }
 
     /* TABEL EXPIRED */
@@ -715,6 +725,7 @@
     var cachedExpiredData = []; 
     var cachedKasual7Hari = [];
     var teksWaRingkasan7Hari = "";
+    var cachedJadwalSpv = {};
     var daftarSpvArea = ["Erhan Sagita Utama", "Jeson Pangemanan", "Muhammad Farhan Dika", "Muhammad Ihsannudin", "Muhammad Ramadhani", "Satirin", "Alfauzia"];
     var kontakWaSpv = { "Erhan Sagita Utama": "6281932352888", "Jeson Pangemanan": "6282299487433", "Muhammad Farhan Dika": "62895326979201", "Muhammad Ihsannudin": "6285715436306", "Muhammad Ramadhani": "6289512143837", "Satirin": "6289660855019", "Alfauzia": "6283819777877" };
 
@@ -1642,6 +1653,10 @@
         cachedKasual7Hari = kasData || [];
         renderRingkasan7Hari();
       }).getDataKasualRealtime(toDateKey(start7d), toDateKey(today));
+      google.script.run.withSuccessHandler(function(jdwData) {
+        cachedJadwalSpv = jdwData || {};
+        updateDashboardAndLeaderboard();
+      }).getJadwalSpv();
     }
 
     // ==========================================
@@ -2545,26 +2560,65 @@
       var startStr = (dStartEl && dStartEl.value) ? dStartEl.value : (rStartEl ? rStartEl.value : '');
       var endStr = (dEndEl && dEndEl.value) ? dEndEl.value : (rEndEl ? rEndEl.value : '');
 
-      var startDate = startStr ? parseDateSafe(startStr) : new Date(today.getFullYear(), today.getMonth(), 1), endDate = endStr ? parseDateSafe(endStr) : new Date(today.getTime());
-      if (!startDate) startDate = new Date(today.getFullYear(), today.getMonth(), 1); if (!endDate || endDate > today) endDate = new Date(today.getTime());
-      startDate.setHours(0, 0, 0, 0); endDate.setHours(0, 0, 0, 0);
+var startDate = startStr ? parseDateSafe(startStr) : new Date(today.getFullYear(), today.getMonth(), 1);
+      var rawEndDate = endStr ? parseDateSafe(endStr) : new Date(today.getTime());
+      if (!startDate) startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+      if (!rawEndDate) rawEndDate = new Date(today.getTime());
+      startDate.setHours(0, 0, 0, 0);
+      rawEndDate.setHours(0, 0, 0, 0);
+
+      // endDate untuk rekap absensi tetap berhenti di hari ini (agar tanggal besok tidak dihitung Alfa)
+      var endDate = rawEndDate > today ? new Date(today.getTime()) : new Date(rawEndDate.getTime());
+      endDate.setHours(0, 0, 0, 0);
 
       var mapAbsenSpvPerHari = {};
-      for (var s = 0; s < daftarSpvArea.length; s++) { mapAbsenSpvPerHari[daftarSpvArea[s].toLowerCase()] = {}; }
+      var mapDetailHarianSpv = {};
+      for (var s = 0; s < daftarSpvArea.length; s++) {
+        var kSpvInit = daftarSpvArea[s].toLowerCase();
+        mapAbsenSpvPerHari[kSpvInit] = {};
+        mapDetailHarianSpv[kSpvInit] = {};
+      }
 
       for (var h = 0; h < cachedLaporanHarian.length; h++) {
         var row = cachedLaporanHarian[h]; if (!row.tanggalKunjungan || !row.supervisor) continue;
         var rDate = parseDateSafe(row.tanggalKunjungan); if (!rDate) continue; rDate.setHours(0, 0, 0, 0);
-        if (rDate < startDate || rDate > endDate) continue;
+        if (rDate < startDate || rDate > rawEndDate) continue;
 
-        var sName = row.supervisor.trim().toLowerCase(); if (!mapAbsenSpvPerHari[sName]) mapAbsenSpvPerHari[sName] = {};
+        var sName = row.supervisor.trim().toLowerCase();
+        if (!mapAbsenSpvPerHari[sName]) mapAbsenSpvPerHari[sName] = {};
+        if (!mapDetailHarianSpv[sName]) mapDetailHarianSpv[sName] = {};
+
         var dKey = toDateKey(rDate), kat = kategoriAbsensi(row.statusKehadiran);
-        if (kat === "HADIR") { mapAbsenSpvPerHari[sName][dKey] = "HADIR"; } else if (kat === "LIBUR" && mapAbsenSpvPerHari[sName][dKey] !== "HADIR") { mapAbsenSpvPerHari[sName][dKey] = "LIBUR"; }
+        var cleanToko = row.namaToko ? String(row.namaToko).split(' (')[0].trim() : "-";
+
+        if (kat === "HADIR") {
+          mapAbsenSpvPerHari[sName][dKey] = "HADIR";
+          mapDetailHarianSpv[sName][dKey] = {
+            kat: "HADIR",
+            toko: cleanToko,
+            statusAsli: row.statusKehadiran || "Hadir",
+            reload: row.cekReload || "-",
+            briefing: row.cekBriefing || "-",
+            modal: row.cekModal || "-"
+          };
+        } else if (kat === "LIBUR" && mapAbsenSpvPerHari[sName][dKey] !== "HADIR") {
+          mapAbsenSpvPerHari[sName][dKey] = "LIBUR";
+          mapDetailHarianSpv[sName][dKey] = {
+            kat: "LIBUR",
+            toko: "-",
+            statusAsli: row.statusKehadiran || "Libur"
+          };
+        }
       }
 
       var daftarHariAktif = [], cur = new Date(startDate.getTime());
       while (cur <= endDate) { daftarHariAktif.push(toDateKey(cur)); cur.setDate(cur.getDate() + 1); }
       if (daftarHariAktif.length === 0) { daftarHariAktif.push(toDateKey(today)); }
+
+      // Daftar hari penuh untuk tampilan matriks (termasuk jadwal sampai akhir bulan filter)
+      var daftarHariMatriks = [], curM = new Date(startDate.getTime());
+      while (curM <= rawEndDate) { daftarHariMatriks.push(toDateKey(curM)); curM.setDate(curM.getDate() + 1); }
+      if (daftarHariMatriks.length === 0) { daftarHariMatriks = daftarHariAktif.slice(); }
 
       var rekapList = [], todayKey = toDateKey(today);
       for (var idx = 0; idx < daftarSpvArea.length; idx++) {
@@ -2577,25 +2631,135 @@
           if (st === "HADIR") hadirCount++; else if (st === "LIBUR") liburCount++; else alfaCount++;
         }
         var statusHariIni = mapHari[todayKey] || "ALFA", totalHariKerja = hadirCount + alfaCount, pctHadir = totalHariKerja > 0 ? Math.round((hadirCount / totalHariKerja) * 100) : (liburCount > 0 ? 100 : 0);
-        rekapList.push({ name: namaAsli, hadir: hadirCount, libur: liburCount, alfa: alfaCount, statusHariIni: statusHariIni, pct: pctHadir, mapHari: mapHari });
+        rekapList.push({ name: namaAsli, keyLower: keyLower, hadir: hadirCount, libur: liburCount, alfa: alfaCount, statusHariIni: statusHariIni, pct: pctHadir, mapHari: mapHari, mapDetail: mapDetailHarianSpv[keyLower] || {} });
       }
 
       rekapList.sort(function(a, b) { if (b.hadir !== a.hadir) return b.hadir - a.hadir; return a.alfa - b.alfa; });
 
-      var matrixHtml = '<table class="table table-sm table-borderless matrix-table mb-0"><thead><tr><th>SPV</th>';
-      for(var dx=0; dx<daftarHariAktif.length; dx++) { matrixHtml += '<th>'+parseInt(daftarHariAktif[dx].split('-')[2])+'</th>'; }
+      function singkatNamaSpvMatriks(nama) {
+        var parts = nama.split(' ');
+        if (parts[0].toLowerCase() === 'muhammad' && parts.length > 1) return 'M. ' + parts[1];
+        return parts[0];
+      }
+      function singkatTokoMatriks(teks) {
+        if (!teks || teks === '-') return '-';
+        var s = String(teks).trim().toUpperCase();
+        if (s === 'L' || s.indexOf('LIBUR') !== -1) return 'L';
+        s = s.replace(/^NICESO\s+/i, 'N');
+        return s;
+      }
+      function ambilAngkaToko(teks) {
+        if (!teks) return "";
+        var m = String(teks).match(/\d{2,4}/);
+        return m ? m[0] : "";
+      }
+
+      window._matriksDetailMap = {};
+      var matrixHtml = '<table class="table table-sm table-borderless matrix-table mb-0"><thead><tr><th class="matrix-sticky-col">SPV</th>';
+      for (var dx = 0; dx < daftarHariMatriks.length; dx++) {
+        var isHariIniCol = daftarHariMatriks[dx] === todayKey;
+        var tglAngka = parseInt(daftarHariMatriks[dx].split('-')[2], 10);
+        matrixHtml += '<th' + (isHariIniCol ? ' style="color:#b91c1c; font-weight:900; text-decoration:underline;"' : '') + '>' + tglAngka + '</th>';
+      }
       matrixHtml += '</tr></thead><tbody>';
+
       for (var k = 0; k < rekapList.length; k++) {
         var pk = rekapList[k];
-        matrixHtml += '<tr><td class="fw-bold text-dark" style="font-size:0.75rem; white-space: nowrap;">'+pk.name.split(' ')[0]+'</td>';
-        for(var dy=0; dy<daftarHariAktif.length; dy++) {
-            var stCell = pk.mapHari[daftarHariAktif[dy]];
-            var clsCell = stCell === "HADIR" ? "mc-hadir" : (stCell === "LIBUR" ? "mc-libur" : "mc-alfa");
-            matrixHtml += '<td><div class="matrix-cell '+clsCell+'" title="'+pk.name+' ('+daftarHariAktif[dy]+')"></div></td>';
+        var jdwSpv = cachedJadwalSpv[pk.keyLower] || {};
+        matrixHtml += '<tr><td class="fw-bold text-dark matrix-sticky-col" style="font-size:0.74rem; white-space: nowrap;">' + singkatNamaSpvMatriks(pk.name) + '</td>';
+
+        for (var dy = 0; dy < daftarHariMatriks.length; dy++) {
+          var tglM = daftarHariMatriks[dy];
+          var isFuture = tglM > todayKey;
+          var stCell = pk.mapHari[tglM];
+          var detCell = pk.mapDetail[tglM];
+          var jdwCell = jdwSpv[tglM] || "";
+
+          var clsCell = "mc-null";
+          var txtCell = "-";
+          var ketStatus = "";
+
+          if (!isFuture) {
+            if (stCell === "HADIR") {
+              clsCell = "mc-hadir";
+              var stAsliLower = String(detCell && detCell.statusAsli ? detCell.statusAsli : "").toLowerCase();
+              var tokoAktual = (detCell && detCell.toko && detCell.toko !== "-") ? detCell.toko : "";
+
+              if (tokoAktual) {
+                txtCell = singkatTokoMatriks(tokoAktual);
+                var numAkt = ambilAngkaToko(tokoAktual);
+                var numJdw = ambilAngkaToko(jdwCell);
+                if (jdwCell && jdwCell.toUpperCase() !== "L" && numJdw && numAkt && numJdw !== numAkt) {
+                  clsCell = "mc-beda";
+                  ketStatus = "HADIR (Beda Toko dari Jadwal)";
+                } else {
+                  ketStatus = "HADIR (Sesuai Jadwal)";
+                }
+              } else if (stAsliLower.indexOf("so") !== -1 || stAsliLower.indexOf("perbantuan") !== -1) {
+                txtCell = (jdwCell && jdwCell.toUpperCase().indexOf("SO") !== -1) ? singkatTokoMatriks(jdwCell) : "SO";
+                ketStatus = "HADIR (" + detCell.statusAsli + ")";
+              } else if (stAsliLower.indexOf("meeting") !== -1) {
+                txtCell = "MTG";
+                ketStatus = "HADIR (" + detCell.statusAsli + ")";
+              } else {
+                txtCell = jdwCell ? singkatTokoMatriks(jdwCell) : "H";
+                ketStatus = "HADIR";
+              }
+            } else if (stCell === "LIBUR") {
+              clsCell = "mc-libur";
+              txtCell = "L";
+              ketStatus = "LIBUR / CUTI";
+            } else {
+              clsCell = "mc-alfa";
+              txtCell = jdwCell ? singkatTokoMatriks(jdwCell) : "A";
+              ketStatus = "ALFA (Belum Lapor)";
+            }
+          } else {
+            // Tanggal mendatang (tampilkan rencana jadwal tanpa menghitung Alfa)
+            if (jdwCell) {
+              txtCell = singkatTokoMatriks(jdwCell);
+              if (jdwCell.toUpperCase() === "L") {
+                clsCell = "mc-rencana-libur";
+                ketStatus = "Jadwal Libur";
+              } else if (jdwCell.toUpperCase().indexOf("SO") !== -1) {
+                clsCell = "mc-rencana-so";
+                ketStatus = "Jadwal SO";
+              } else {
+                clsCell = "mc-rencana";
+                ketStatus = "Jadwal Kunjungan";
+              }
+            } else {
+              clsCell = "mc-null";
+              txtCell = "-";
+              ketStatus = "Belum Ada Jadwal";
+            }
+          }
+
+          var cellId = pk.keyLower + "_" + tglM;
+          window._matriksDetailMap[cellId] = {
+            spv: pk.name,
+            tgl: tglM,
+            status: ketStatus,
+            jadwal: jdwCell || "-",
+            aktual: (detCell && detCell.toko && detCell.toko !== "-") ? detCell.toko : (detCell ? detCell.statusAsli : "-"),
+            checklist: (detCell && detCell.kat === "HADIR" && detCell.toko !== "-") ? ("Reload: " + detCell.reload + " | Briefing: " + detCell.briefing + " | Modal: " + detCell.modal) : ""
+          };
+
+          var tipTitle = pk.name + " (" + tglM + ") | " + ketStatus + " | Jadwal: " + (jdwCell || "-");
+          matrixHtml += '<td><div class="matrix-cell ' + clsCell + '" title="' + tipTitle + '" onclick="tampilDetailMatriks(\'' + cellId + '\')">' + txtCell + '</div></td>';
         }
         matrixHtml += '</tr>';
       }
       matrixHtml += '</tbody></table>';
+      matrixHtml += '<div class="px-3 py-2 border-top bg-white" style="font-size:0.7rem; white-space:normal;">';
+      matrixHtml += '<span class="badge bg-success me-1">N194</span>Hadir &bull; ';
+      matrixHtml += '<span class="badge bg-success border border-2 border-warning me-1">N194</span>Hadir (Beda Rute) &bull; ';
+      matrixHtml += '<span class="badge bg-warning text-dark me-1">L</span>Libur &bull; ';
+      matrixHtml += '<span class="badge bg-danger me-1">N085</span>Alfa &bull; ';
+      matrixHtml += '<span class="badge bg-light text-dark border me-1">N106</span>Jadwal Mendatang &bull; ';
+      matrixHtml += '<span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 me-1">N043 SO</span>Jadwal SO';
+      matrixHtml += '<div class="text-muted mt-1 fst-italic"><i class="bi bi-hand-index-thumb me-1"></i>Klik salah satu kotak toko untuk melihat detail Jadwal vs Aktual.</div></div>';
+      matrixHtml += '<div id="boxDetailMatriks" class="p-2 px-3 bg-light border-top small text-dark d-none" style="white-space:normal;"></div>';
       document.getElementById('matrixContainer').innerHTML = matrixHtml;
 
       var lbHtml = '<div class="row g-3">';
@@ -3317,6 +3481,16 @@
         resetKameraKasual();
       }
     });
+function tampilDetailMatriks(cellId) {
+      var info = window._matriksDetailMap ? window._matriksDetailMap[cellId] : null;
+      var box = document.getElementById('boxDetailMatriks');
+      if (!info || !box) return;
+      var html = '<strong><i class="bi bi-calendar-event text-danger me-1"></i>' + info.tgl + ' &bull; ' + info.spv + '</strong><br>';
+      html += 'Status: <b>' + info.status + '</b> &bull; Jadwal: <span class="text-primary fw-bold">' + info.jadwal + '</span> &bull; Aktual: <span class="text-success fw-bold">' + info.aktual + '</span>';
+      if (info.checklist) html += '<br><span class="text-muted">' + info.checklist + '</span>';
+      box.innerHTML = html;
+      box.classList.remove('d-none');
+    }
 </script>
 </body>
 </html>
