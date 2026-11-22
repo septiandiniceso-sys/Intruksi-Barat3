@@ -176,7 +176,7 @@
     </div>
   </div>
 
-  <nav class="navbar navbar-custom py-2 px-2 print-hide">
+  <nav class="navbar navbar-custom sticky-top py-2 px-2 print-hide">
     <div class="container-fluid d-flex justify-content-between align-items-center">
       <div class="d-flex align-items-center gap-2">
         <button class="btn text-white p-0 border-0 shadow-none me-1" onclick="toggleSidebar()"><i class="bi bi-list fs-1" style="line-height: 1;"></i></button>
@@ -317,10 +317,40 @@
                     </div>
                  </div>
 
-                 <label class="small-label text-primary fw-bold d-block mb-2"><i class="bi bi-camera me-1"></i>Ambil Foto Selfie (Wajib)</label>
-                 <input type="file" class="form-control mb-3 bg-white" accept="image/*" capture="user" id="kasFoto" required onchange="compressAndPreviewImage(this, 'prevKasual')">
-                 <img id="prevKasual" src="" style="width: 100%; max-width: 220px; height: auto; border-radius: 12px; display: none; margin: 0 auto; border: 3px solid #dee2e6; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-              </div>
+                 <label class="small-label text-primary fw-bold d-block mb-2"><i class="bi bi-camera-video-fill me-1"></i>Kamera Selfie Langsung (Wajib)</label>
+                 <input type="hidden" id="kasFoto">
+
+                 <!-- Tombol Buka Kamera -->
+                 <button type="button" class="btn btn-dark w-100 py-2 mb-2 fw-bold rounded-3 shadow-sm" id="btnBukaKamera" onclick="bukaKameraKasual()">
+                   <i class="bi bi-camera-fill me-2"></i>Buka Kamera Selfie
+                 </button>
+
+                 <!-- Area Live Video Kamera -->
+                 <div id="boxKameraLive" style="display: none;" class="mb-3">
+                   <video id="videoKasual" autoplay playsinline muted style="width: 100%; max-width: 280px; border-radius: 14px; border: 3px solid #111827; background: #000; object-fit: cover;"></video>
+                   <div class="d-flex justify-content-center gap-2 mt-2">
+                     <button type="button" class="btn btn-danger fw-bold px-4 rounded-pill shadow-sm" onclick="jepretFotoKasual()">
+                       <i class="bi bi-camera-fill me-1"></i>Ambil Foto
+                     </button>
+                     <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3" onclick="gantiArahKameraKasual()" title="Putar Kamera">
+                       <i class="bi bi-arrow-repeat"></i> Putar
+                     </button>
+                   </div>
+                 </div>
+
+                 <!-- Hasil Preview Foto -->
+                 <img id="prevKasual" src="" style="width: 100%; max-width: 240px; height: auto; border-radius: 12px; display: none; margin: 0 auto 10px; border: 3px solid #16a34a; box-shadow: 0 4px 10px rgba(0,0,0,0.12);">
+
+                 <!-- Tombol Foto Ulang -->
+                 <button type="button" class="btn btn-outline-danger btn-sm fw-bold rounded-pill px-4 mb-2" id="btnUlangKamera" style="display: none;" onclick="bukaKameraKasual()">
+                   <i class="bi bi-arrow-counterclockwise me-1"></i>Foto Ulang
+                 </button>
+
+                 <!-- Cadangan Otomatis Jika Browser HP Menolak Izin Kamera Live -->
+                 <div id="boxFallbackKamera" style="display: none;" class="mt-2">
+                   <small class="text-danger d-block mb-1 fw-bold">Kamera live diblokir browser. Gunakan kamera cadangan:</small>
+                   <input type="file" class="form-control form-control-sm bg-white" accept="image/*" capture="user" id="kasFotoFallback" onchange="fallbackFotoKasual(this)">
+                 </div>
 
               <input type="hidden" id="kasTitikKoordinat" value="">
               <input type="hidden" id="kasStatusLokasi" value="">
@@ -3156,5 +3186,136 @@
       XLSX.writeFile(wb, fileName);
     }
   </script>
+  // ========================================================
+    // KAMERA LIVE IN-WEB UNTUK ABSENSI KASUAL
+    // ========================================================
+    var streamKameraKasual = null;
+    var modeKameraKasual = 'user'; // 'user' = kamera depan, 'environment' = belakang
+
+    function bukaKameraKasual() {
+      var video = document.getElementById('videoKasual');
+      var boxLive = document.getElementById('boxKameraLive');
+      var btnBuka = document.getElementById('btnBukaKamera');
+      var btnUlang = document.getElementById('btnUlangKamera');
+      var prevImg = document.getElementById('prevKasual');
+      var boxFallback = document.getElementById('boxFallbackKamera');
+
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        boxFallback.style.display = 'block';
+        alert("Browser HP ini belum mendukung kamera langsung. Silakan gunakan tombol kamera cadangan di bawah.");
+        return;
+      }
+
+      matikanKameraKasual();
+
+      navigator.mediaDevices.getUserMedia({
+        video: { facingMode: modeKameraKasual, width: { ideal: 1080 }, height: { ideal: 1080 } },
+        audio: false
+      }).then(function(stream) {
+        streamKameraKasual = stream;
+        video.srcObject = stream;
+        video.style.transform = (modeKameraKasual === 'user') ? 'scaleX(-1)' : 'none';
+        boxLive.style.display = 'block';
+        btnBuka.style.display = 'none';
+        btnUlang.style.display = 'none';
+        prevImg.style.display = 'none';
+        boxFallback.style.display = 'none';
+        video.play();
+      }).catch(function(err) {
+        boxFallback.style.display = 'block';
+        btnBuka.style.display = 'block';
+        alert("Izin kamera ditolak atau tidak tersedia (" + err.name + "). Pastikan izin kamera aktif, atau pakai kamera cadangan di bawah.");
+      });
+    }
+
+    function gantiArahKameraKasual() {
+      modeKameraKasual = (modeKameraKasual === 'user') ? 'environment' : 'user';
+      bukaKameraKasual();
+    }
+
+    function jepretFotoKasual() {
+      var video = document.getElementById('videoKasual');
+      if (!video || video.videoWidth === 0) {
+        alert("Kamera masih menyiapkan gambar, tunggu 1 detik lalu tekan lagi.");
+        return;
+      }
+
+      var canvas = document.createElement('canvas');
+      var MAX = 800;
+      var w = video.videoWidth;
+      var h = video.videoHeight;
+      if (w > h) { if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; } }
+      else { if (h > MAX) { w = Math.round(w * MAX / h); h = MAX; } }
+
+      canvas.width = w;
+      canvas.height = h;
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, w, h); // Tidak di-mirror agar tulisan Name Tag tetap terbaca normal
+
+      var dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+      document.getElementById('kasFoto').setAttribute('data-compressed', dataUrl);
+
+      var prevImg = document.getElementById('prevKasual');
+      prevImg.src = dataUrl;
+      prevImg.style.display = 'block';
+
+      matikanKameraKasual();
+      document.getElementById('boxKameraLive').style.display = 'none';
+      document.getElementById('btnUlangKamera').style.display = 'inline-block';
+      document.getElementById('btnBukaKamera').style.display = 'none';
+    }
+
+    function matikanKameraKasual() {
+      if (streamKameraKasual) {
+        streamKameraKasual.getTracks().forEach(function(track) { track.stop(); });
+        streamKameraKasual = null;
+      }
+      var video = document.getElementById('videoKasual');
+      if (video) video.srcObject = null;
+    }
+
+    function resetKameraKasual() {
+      matikanKameraKasual();
+      var boxLive = document.getElementById('boxKameraLive');
+      var btnBuka = document.getElementById('btnBukaKamera');
+      var btnUlang = document.getElementById('btnUlangKamera');
+      if (boxLive) boxLive.style.display = 'none';
+      if (btnUlang) btnUlang.style.display = 'none';
+      if (btnBuka) btnBuka.style.display = 'block';
+    }
+
+    function fallbackFotoKasual(input) {
+      var file = input.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var img = new Image();
+        img.src = e.target.result;
+        img.onload = function() {
+          var canvas = document.createElement('canvas'), ctx = canvas.getContext('2d'), MAX = 800, w = img.width, h = img.height;
+          if (w > h) { if (w > MAX) { h *= MAX / w; w = MAX; } } else { if (h > MAX) { w *= MAX / h; h = MAX; } }
+          canvas.width = w; canvas.height = h; ctx.drawImage(img, 0, 0, w, h);
+          var dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+          document.getElementById('kasFoto').setAttribute('data-compressed', dataUrl);
+          var prevImg = document.getElementById('prevKasual');
+          prevImg.src = dataUrl;
+          prevImg.style.display = 'block';
+        };
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Otomatis reset tampilan kamera setelah absen berhasil dikirim
+    var formKasEl = document.getElementById('formAbsenKasual');
+    if (formKasEl) {
+      formKasEl.addEventListener('reset', resetKameraKasual);
+    }
+
+    // Otomatis matikan kamera jika layar HP dimatikan atau pindah aplikasi (hemat baterai)
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden && streamKameraKasual) {
+        resetKameraKasual();
+      }
+    });
 </body>
 </html>
