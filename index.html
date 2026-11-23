@@ -12,7 +12,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
-<style>
+  <style>
     :root { --primary-niceso: #b91c1c; --crimson-banner: #a61b21; --secondary-niceso: #111827; --navy-sub: #1e293b; --bg-light: #f3f4f6; }
     body { background-color: var(--bg-light); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding-bottom: 95px; color: #111827; }
     
@@ -100,6 +100,8 @@
     .progress-fill { height: 100%; background: #16a34a; transition: width 0.5s ease; }
     .checklist-item { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px; margin-bottom: 12px; }
     .checklist-upload-area { margin-top: 10px; padding-top: 10px; border-top: 1px dashed #d1d5db; }
+
+    /* MATRIKS KEHADIRAN + JADWAL SPV */
     .matrix-table th { font-size: 0.72rem; text-align: center; color: #4b5563; padding: 5px 3px !important; }
     .matrix-table td { padding: 3px 2px !important; vertical-align: middle; text-align: center; }
     .matrix-sticky-col { position: sticky; left: 0; background: #ffffff !important; z-index: 2; text-align: left !important; padding-left: 10px !important; padding-right: 8px !important; border-right: 1px solid #e5e7eb; box-shadow: 2px 0 4px rgba(0,0,0,0.04); }
@@ -113,6 +115,7 @@
     .mc-rencana-libur { background-color: #fef9c3; color: #854d0e; border: 1px dashed #eab308; }
     .mc-rencana-so { background-color: #eff6ff; color: #1d4ed8; border: 1px dashed #93c5fd; }
     .mc-null { background-color: #e5e7eb; color: #6b7280; }
+
     @media print { .print-hide, .bottom-nav { display: none !important; } #paneHistory, #paneRiwayat { display: block !important; } }
 
     /* TABEL EXPIRED */
@@ -162,14 +165,14 @@
         <div class="sidebar-label mt-3">Link Eksternal</div>
         <a href="https://septiandiniceso-sys.github.io/Omset-Barat3/" target="_blank" class="sidebar-item"><i class="bi bi-graph-up-arrow text-danger"></i> Cek Omset Area</a>
         <a href="https://septiandiniceso-sys.github.io/So-barat3/" target="_blank" class="sidebar-item"><i class="bi bi-clipboard2-data-fill text-info"></i> SO Area Barat 3</a>
-         <a href="https://script.google.com/macros/s/AKfycbwIcZd0-Zl0_aCtGbf34hrqGC1xfnzKSKoUIdm7x6NPPJpknLsQD51lXJKA0V3S5-shJA/exec" target="_blank" class="sidebar-item"><i class="bi bi-tag-fill text-warning"></i> Analisa Item</a>
+        <a href="https://script.google.com/macros/s/AKfycbwIcZd0-Zl0_aCtGbf34hrqGC1xfnzKSKoUIdm7x6NPPJpknLsQD51lXJKA0V3S5-shJA/exec" target="_blank" class="sidebar-item"><i class="bi bi-tag-fill text-warning"></i> Analisa Item</a>
         <a href="https://ops.niceso.id/" target="_blank" class="sidebar-item"><i class="bi bi-globe text-primary"></i> Web Ops Niceso</a>
-         <a href="https://septiandiniceso-sys.github.io/KSLS/" target="_blank" class="sidebar-item"><i class="bi bi-shield-exclamation text-danger"></i> Ket KS / LS</a>
+        <a href="https://septiandiniceso-sys.github.io/KSLS/" target="_blank" class="sidebar-item"><i class="bi bi-shield-exclamation text-danger"></i> Ket KS / LS</a>
         <a href="https://septiandiniceso-sys.github.io/Penilaian-Barat3/" target="_blank" class="sidebar-item"><i class="bi bi-calendar-month-fill text-primary"></i> Input Bulanan B3</a>
         <a class="sidebar-item" onclick="toggleMenuPilihanWa(); toggleSidebar();"><i class="bi bi-whatsapp text-success"></i> Chat WA SPV</a>
-        <a href="https://septiandiniceso-sys.github.io/SOP-Barat3/" target="_blank" class="sidebar-item"><i class="bi bi-journal-bookmark-fill text-primary"></i> SOP Operasional</a>
+        <a href="https://sites.google.com/view/sop-niceso/sop-niceso" target="_blank" class="sidebar-item"><i class="bi bi-journal-bookmark-fill text-primary"></i> SOP Operasional</a>
         <a href="https://hris.niceso.id/index.php?page=dashboard" target="_blank" class="sidebar-item"><i class="bi bi-buildings-fill text-success"></i> HRIS Niceso</a>
-    </div>
+      </div>
     </div>
     
     <div class="sidebar-footer" id="sidebarFooterSpv" style="display: none;">
@@ -361,7 +364,7 @@
                    <small class="text-danger d-block mb-1 fw-bold">Kamera live diblokir browser. Gunakan kamera cadangan:</small>
                    <input type="file" class="form-control form-control-sm bg-white" accept="image/*" capture="user" id="kasFotoFallback" onchange="fallbackFotoKasual(this)">
                  </div>
-                </div>
+              </div>
 
               <input type="hidden" id="kasTitikKoordinat" value="">
               <input type="hidden" id="kasStatusLokasi" value="">
@@ -517,7 +520,7 @@
           </div>
         </div>
 
-        <!-- KARTU RINGKASAN EVALUASI 7 HARI TERAKHIR (DIPINDAHKAN KE DASHBOARD) -->
+        <!-- KARTU RINGKASAN EVALUASI 7 HARI TERAKHIR -->
         <div class="card shadow-sm mb-4 border-0 rounded-4 print-hide" id="cardRingkasan7Hari" style="background: linear-gradient(145deg, #ffffff, #f8fafc); border: 1px solid #e2e8f0 !important;">
           <div class="card-header bg-white border-bottom py-2 px-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
             <div>
@@ -667,8 +670,8 @@
     </div>
   </div>
 
-  <script>
-// ========================================================
+<script>
+    // ========================================================
     // JEMBATAN OTOMATIS GITHUB PAGES -> GOOGLE APPS SCRIPT
     // ========================================================
     var GAS_API_URL = "https://script.google.com/macros/s/AKfycbyXinuJCH5dJOSzeQXxlUrGfS4eSWIBvvYQL-Drmo4M_uJxe8PTC_BRiOZz_hOWjnJc/exec";
@@ -719,15 +722,35 @@
     }
 
     var namaSpvGlobal = "", listTokoGlobal = [], isAdminGlobal = false, activeTugasList = [];
+    var allTokoAreaGlobal = [];
+    var lastSpvFilterUmum = "";
     var cachedLaporanData = [], cachedLaporanHarian = [], selectedTugasIndex = 0, chartInstance = null;
     var filteredHistoryData = [], isHarianView = true;
-    var listTokoKasualGlobal = []; 
-    var cachedExpiredData = []; 
+    var listTokoKasualGlobal = [];
+    var cachedExpiredData = [];
     var cachedKasual7Hari = [];
-    var teksWaRingkasan7Hari = "";
     var cachedJadwalSpv = {};
+    var teksWaRingkasan7Hari = "";
     var daftarSpvArea = ["Erhan Sagita Utama", "Jeson Pangemanan", "Muhammad Farhan Dika", "Muhammad Ihsannudin", "Muhammad Ramadhani", "Satirin", "Alfauzia"];
     var kontakWaSpv = { "Erhan Sagita Utama": "6281932352888", "Jeson Pangemanan": "6282299487433", "Muhammad Farhan Dika": "62895326979201", "Muhammad Ihsannudin": "6285715436306", "Muhammad Ramadhani": "6289512143837", "Satirin": "6289660855019", "Alfauzia": "6283819777877" };
+
+    function isSpvCocokFrontend(spvA, spvB) {
+      var alias = {
+        "muhammad ihsanuddin": "muhammad ihsannudin",
+        "muhammad ramadhani saputra": "muhammad ramadhani"
+      };
+      var norm = function(s) {
+        var low = String(s || "").trim().toLowerCase().replace(/\s+/g, " ");
+        return alias[low] || low;
+      };
+      var a = norm(spvA), b = norm(spvB);
+      if (!a || !b) return false;
+      if (a === b) return true;
+      if (a.length >= 4 && b.length >= 4) {
+        if (a.indexOf(b) !== -1 || b.indexOf(a) !== -1) return true;
+      }
+      return false;
+    }
 
     function formatNamaKasual(input) {
       var val = input.value.toUpperCase();
@@ -856,7 +879,7 @@
 
       var targetTokoList = [];
       for(var z=0; z<listTokoGlobal.length; z++) { 
-          if(listTokoGlobal[z].spvToko.toLowerCase() === namaSpvGlobal.toLowerCase()) { 
+          if(isSpvCocokFrontend(listTokoGlobal[z].spvToko, namaSpvGlobal)) { 
               if (targetTokoTugas !== "Semua Toko" && listTokoGlobal[z].namaToko.toLowerCase() !== targetTokoTugas.toLowerCase() && listTokoGlobal[z].idToko.toLowerCase() !== targetTokoTugas.toLowerCase()) {
                   continue; 
               }
@@ -1034,7 +1057,8 @@
     function renderPantauanKasual(data, filterSpv) {
         var validStores = [];
         for (var i = 0; i < listTokoGlobal.length; i++) {
-            if (filterSpv && listTokoGlobal[i].spvToko.toLowerCase() !== filterSpv) continue;
+            if (isAdminGlobal && filterSpv && !isSpvCocokFrontend(listTokoGlobal[i].spvToko, filterSpv)) continue;
+            if (!isAdminGlobal && !isSpvCocokFrontend(listTokoGlobal[i].spvToko, namaSpvGlobal)) continue;
             validStores.push(listTokoGlobal[i].namaToko.toLowerCase());
         }
         
@@ -1097,9 +1121,10 @@
             }
 
             var targetSpv = ""; var waNo = "";
-            for(var st=0; st<listTokoGlobal.length; st++){
-                if(listTokoGlobal[st].namaToko.toLowerCase() === g.toko.toLowerCase()) {
-                    targetSpv = listTokoGlobal[st].spvToko;
+            var sumberCekSpv = allTokoAreaGlobal.length > 0 ? allTokoAreaGlobal : listTokoGlobal;
+            for(var st=0; st<sumberCekSpv.length; st++){
+                if(sumberCekSpv[st].namaToko.toLowerCase() === g.toko.toLowerCase()) {
+                    targetSpv = sumberCekSpv[st].spvToko;
                     waNo = getWaNumber(targetSpv);
                     break;
                 }
@@ -1153,7 +1178,7 @@
       
       var validStores = [];
       for (var i = 0; i < listTokoGlobal.length; i++) {
-          if (!isAdminGlobal && listTokoGlobal[i].spvToko.toLowerCase() !== namaSpvGlobal.toLowerCase()) continue;
+          if (!isAdminGlobal && !isSpvCocokFrontend(listTokoGlobal[i].spvToko, namaSpvGlobal)) continue;
           validStores.push(listTokoGlobal[i].namaToko);
       }
       google.script.run.withSuccessHandler(renderMiniDashboardDiPanel).getMiniDashboardKasualBatch(validStores);
@@ -1163,7 +1188,7 @@
       if (!namaSpvGlobal) return;
       var validStores = [];
       for (var i = 0; i < listTokoGlobal.length; i++) {
-          if (!isAdminGlobal && listTokoGlobal[i].spvToko.toLowerCase() !== namaSpvGlobal.toLowerCase()) continue;
+          if (!isAdminGlobal && !isSpvCocokFrontend(listTokoGlobal[i].spvToko, namaSpvGlobal)) continue;
           validStores.push(listTokoGlobal[i].namaToko);
       }
       var today = new Date();
@@ -1358,10 +1383,8 @@
     
     function getWaNumber(spvName) {
         if(!spvName) return "";
-        var q = spvName.toLowerCase();
         for (var i = 0; i < daftarSpvArea.length; i++) {
-            var areaName = daftarSpvArea[i].toLowerCase();
-            if (areaName.indexOf(q) !== -1 || q.indexOf(areaName) !== -1) { return kontakWaSpv[daftarSpvArea[i]]; }
+            if (isSpvCocokFrontend(daftarSpvArea[i], spvName)) { return kontakWaSpv[daftarSpvArea[i]]; }
         }
         return "";
     }
@@ -1473,7 +1496,10 @@
       var rStart = document.getElementById('filterStart');
       var rEnd = document.getElementById('filterEnd');
 
-      if (dSpv && rSpv && isAdminGlobal) rSpv.value = dSpv.value;
+      if (dSpv && rSpv && !document.getElementById('btnJenisKasual').checked) {
+        rSpv.value = dSpv.value;
+        lastSpvFilterUmum = dSpv.value;
+      }
       if (dStart && rStart && dStart.value) rStart.value = dStart.value;
       if (dEnd && rEnd && dEnd.value) rEnd.value = dEnd.value;
 
@@ -1491,7 +1517,10 @@
       var rStart = document.getElementById('filterStart');
       var rEnd = document.getElementById('filterEnd');
 
-      if (rSpv && dSpv && isAdminGlobal) dSpv.value = rSpv.value;
+      if (rSpv && dSpv && !document.getElementById('btnJenisKasual').checked) {
+        dSpv.value = rSpv.value;
+        lastSpvFilterUmum = rSpv.value;
+      }
       if (rStart && dStart && rStart.value) dStart.value = rStart.value;
       if (rEnd && dEnd && rEnd.value) dEnd.value = rEnd.value;
 
@@ -1542,12 +1571,13 @@
       var dropToko = document.getElementById('admTargetToko');
       dropToko.innerHTML = '<option value="Semua Toko">-- Semua Toko --</option>';
 
-      for(var i=0; i<listTokoGlobal.length; i++) {
-        if (listTokoGlobal[i].spvToko.toLowerCase().indexOf('admin') !== -1) continue;
-        if (spv === "Semua SPV" || listTokoGlobal[i].spvToko === spv) {
+      var sumber = allTokoAreaGlobal.length > 0 ? allTokoAreaGlobal : listTokoGlobal;
+      for(var i=0; i<sumber.length; i++) {
+        if (sumber[i].spvToko.toLowerCase().indexOf('admin') !== -1) continue;
+        if (spv === "Semua SPV" || isSpvCocokFrontend(sumber[i].spvToko, spv)) {
           var opt = document.createElement('option');
-          opt.value = listTokoGlobal[i].namaToko; 
-          opt.text = listTokoGlobal[i].namaToko + ' (' + listTokoGlobal[i].spvToko + ')';
+          opt.value = sumber[i].namaToko; 
+          opt.text = sumber[i].namaToko + ' (' + sumber[i].spvToko + ')';
           dropToko.add(opt);
         }
       }
@@ -1578,7 +1608,10 @@
        
         localStorage.setItem('sesiLoginSpv', email); localStorage.setItem('sesiPassSpv', pass);
         
-        namaSpvGlobal = res.namaSpv; listTokoGlobal = res.listToko; isAdminGlobal = res.isAdmin;
+        namaSpvGlobal = res.namaSpv;
+        listTokoGlobal = res.listToko || [];
+        allTokoAreaGlobal = (res.allTokoArea && res.allTokoArea.length > 0) ? res.allTokoArea : listTokoGlobal;
+        isAdminGlobal = res.isAdmin;
        
         if (isAdminGlobal) { 
             document.getElementById('sideNavAdminWrapper').style.display = 'block'; 
@@ -1587,18 +1620,12 @@
             updateDropdownTokoAdmin(); 
         }
 
+        // Dashboard & Filter Harian/Instruksi terbuka untuk semua SPV (default: Semua SPV)
         var filterSpv = document.getElementById('filterSpv');
         var dashFilterSpv = document.getElementById('dashFilterSpv');
-        if (!isAdminGlobal) {
-           filterSpv.innerHTML = '<option value="' + namaSpvGlobal.toLowerCase() + '">' + namaSpvGlobal + '</option>';
-           filterSpv.value = namaSpvGlobal.toLowerCase();
-           filterSpv.disabled = true;
-           if (dashFilterSpv) {
-             dashFilterSpv.innerHTML = '<option value="' + namaSpvGlobal.toLowerCase() + '">' + namaSpvGlobal + '</option>';
-             dashFilterSpv.value = namaSpvGlobal.toLowerCase();
-             dashFilterSpv.disabled = true;
-           }
-        }
+        if (filterSpv) { filterSpv.disabled = false; filterSpv.value = ""; }
+        if (dashFilterSpv) { dashFilterSpv.disabled = false; dashFilterSpv.value = ""; }
+        lastSpvFilterUmum = "";
         
         populateDropdownHarian();
         document.getElementById('displayNamaSpv').innerText = res.namaSpv;
@@ -1653,6 +1680,7 @@
         cachedKasual7Hari = kasData || [];
         renderRingkasan7Hari();
       }).getDataKasualRealtime(toDateKey(start7d), toDateKey(today));
+
       google.script.run.withSuccessHandler(function(jdwData) {
         cachedJadwalSpv = jdwData || {};
         updateDashboardAndLeaderboard();
@@ -1670,7 +1698,7 @@
       var dashSpvEl = document.getElementById('dashFilterSpv');
       var filterSpvEl = document.getElementById('filterSpv');
       var selectedVal = (dashSpvEl && dashSpvEl.value !== undefined) ? dashSpvEl.value : (filterSpvEl ? filterSpvEl.value : "");
-      var actualSpvFilter = isAdminGlobal ? selectedVal.trim().toLowerCase() : namaSpvGlobal.toLowerCase();
+      var actualSpvFilter = selectedVal.trim().toLowerCase();
       var labelSpvTitle = actualSpvFilter ? actualSpvFilter.toUpperCase() : "SEMUA SPV (AREA BARAT 3)";
 
       var today = new Date(); today.setHours(0,0,0,0);
@@ -1689,21 +1717,27 @@
       var targetSpvNames = [];
       if (actualSpvFilter) {
         for (var s = 0; s < daftarSpvArea.length; s++) {
-          if (daftarSpvArea[s].toLowerCase() === actualSpvFilter) targetSpvNames.push(daftarSpvArea[s]);
+          if (isSpvCocokFrontend(daftarSpvArea[s], actualSpvFilter)) targetSpvNames.push(daftarSpvArea[s]);
         }
         if (targetSpvNames.length === 0 && namaSpvGlobal) targetSpvNames.push(namaSpvGlobal);
       } else {
         targetSpvNames = daftarSpvArea.slice();
       }
 
+      var sumberTokoDash = allTokoAreaGlobal.length > 0 ? allTokoAreaGlobal : listTokoGlobal;
       var tokoMilikSpv = [];
-      var mapTokoMilikLower = {};
-      for (var t = 0; t < listTokoGlobal.length; t++) {
-        var tk = listTokoGlobal[t];
+      for (var t = 0; t < sumberTokoDash.length; t++) {
+        var tk = sumberTokoDash[t];
         if (tk.spvToko.toLowerCase().indexOf('admin') !== -1) continue;
-        if (actualSpvFilter && tk.spvToko.toLowerCase() !== actualSpvFilter) continue;
+        if (actualSpvFilter && !isSpvCocokFrontend(tk.spvToko, actualSpvFilter)) continue;
         tokoMilikSpv.push(tk);
-        mapTokoMilikLower[tk.namaToko.toLowerCase()] = tk.namaToko;
+      }
+
+      // Khusus pantauan Kasual 7 Hari: SPV hanya melihat toko area sendiri
+      var mapTokoKasualAllowed = {};
+      var sumberKasual7d = isAdminGlobal ? tokoMilikSpv : listTokoGlobal;
+      for (var kt = 0; kt < sumberKasual7d.length; kt++) {
+        mapTokoKasualAllowed[sumberKasual7d[kt].namaToko.toLowerCase()] = true;
       }
 
       // 1. KEHADIRAN, KUNJUNGAN TOKO, BLANK SPOT & RED FLAG (7 HARI)
@@ -1720,7 +1754,7 @@
         var rowH = cachedLaporanHarian[h];
         if (!rowH.tanggalKunjungan || !rowH.supervisor) continue;
         var spvRowLower = rowH.supervisor.trim().toLowerCase();
-        if (actualSpvFilter && spvRowLower !== actualSpvFilter) continue;
+        if (actualSpvFilter && !isSpvCocokFrontend(spvRowLower, actualSpvFilter)) continue;
 
         var rDate = parseDateSafe(rowH.tanggalKunjungan);
         if (!rDate) continue; rDate.setHours(0,0,0,0);
@@ -1788,7 +1822,7 @@
 
         for (var tkI = 0; tkI < tokoMilikSpv.length; tkI++) {
           var tkObj = tokoMilikSpv[tkI];
-          if (targetSpvT !== "Semua SPV" && targetSpvT.toLowerCase() !== tkObj.spvToko.toLowerCase()) continue;
+          if (targetSpvT !== "Semua SPV" && !isSpvCocokFrontend(targetSpvT, tkObj.spvToko)) continue;
           if (targetTokoT !== "Semua Toko" && tkObj.namaToko.toLowerCase() !== targetTokoT.toLowerCase() && tkObj.idToko.toLowerCase() !== targetTokoT.toLowerCase()) continue;
 
           var stEksekusi = "Belum Selesai";
@@ -1804,13 +1838,13 @@
         }
       }
 
-      // 3. ABSENSI KASUAL (7 HARI)
+      // 3. ABSENSI KASUAL (7 HARI) — KHUSUS AREA SPV SENDIRI JIKA NON-ADMIN
       var totalShiftMasuk = 0;
       var mapKasualShift = {};
       for (var kIdx = 0; kIdx < cachedKasual7Hari.length; kIdx++) {
         var rowK = cachedKasual7Hari[kIdx];
         var tkLower = String(rowK.namaToko || "").toLowerCase();
-        if (!mapTokoMilikLower[tkLower] && (!isAdminGlobal || actualSpvFilter)) continue;
+        if (!mapTokoKasualAllowed[tkLower]) continue;
 
         var dKas = parseDateSafe(rowK.tanggal || rowK.timestamp);
         if (!dKas) continue; dKas.setHours(0,0,0,0);
@@ -1842,7 +1876,7 @@
 
       for (var eIdx = 0; eIdx < cachedExpiredData.length; eIdx++) {
         var rExp = cachedExpiredData[eIdx];
-        if (actualSpvFilter && String(rExp.spv || "").toLowerCase().indexOf(actualSpvFilter) === -1) continue;
+        if (actualSpvFilter && !isSpvCocokFrontend(rExp.spv, actualSpvFilter)) continue;
 
         var qVal = parseInt(rExp.qty, 10) || 0;
         var stExp = rExp.statusTindakan || "Belum Ditindak";
@@ -1893,6 +1927,7 @@
       teksWaRingkasan7Hari = waLines.join("\n");
 
       // RENDER HTML KARTU RINGKASAN
+      var labelKasualScope = isAdminGlobal ? "7 Hari" : "Area Anda - 7 Hari";
       var html = '<div class="row g-2">';
       
       // Box 1: Kehadiran & Kunjungan
@@ -1911,7 +1946,7 @@
 
       // Box 2: Instruksi & Kasual
       html += '<div class="col-12 col-md-6"><div class="summary-7d-box">';
-      html += '<div class="summary-7d-title"><i class="bi bi-list-task text-primary"></i>2. Instruksi Aktif & Kasual (7 Hari)</div>';
+      html += '<div class="summary-7d-title"><i class="bi bi-list-task text-primary"></i>2. Instruksi Aktif & Kasual ('+labelKasualScope+')</div>';
       html += '<div class="small fw-bold text-dark mb-1" style="font-size:0.75rem;">Status Eksekusi Instruksi Toko:</div>';
       html += '<div class="d-flex flex-wrap gap-1 mb-2">';
       html += '<span class="badge bg-success">Tuntas: '+insSelesai+'</span>';
@@ -1919,7 +1954,7 @@
       html += '<span class="badge bg-danger">Belum: '+insBelum+'</span>';
       html += '</div>';
       html += '<hr class="my-2">';
-      html += '<div class="small mb-1" style="font-size:0.75rem;"><strong>Total Shift Kasual (7 Hari):</strong> <span class="badge bg-info text-dark fw-bold">'+totalShiftMasuk+' Shift Masuk</span></div>';
+      html += '<div class="small mb-1" style="font-size:0.75rem;"><strong>Total Shift Kasual ('+labelKasualScope+'):</strong> <span class="badge bg-info text-dark fw-bold">'+totalShiftMasuk+' Shift Masuk</span></div>';
       html += '<div class="small" style="font-size:0.75rem;"><strong>Kasual Lupa Absen Pulang:</strong> '+(lupaPulangList.length > 0 ? '<span class="text-danger fw-bold">'+lupaPulangList.length+' Orang ('+lupaPulangList.slice(0,4).join(', ')+(lupaPulangList.length>4?'...':'')+')</span>' : '<span class="text-success fw-bold">0 (Tertib)</span>')+'</div>';
       html += '</div></div>';
 
@@ -1945,16 +1980,14 @@
       var dashSpvEl = document.getElementById('dashFilterSpv');
       var filterSpvEl = document.getElementById('filterSpv');
       var selectedVal = (dashSpvEl && dashSpvEl.value !== undefined) ? dashSpvEl.value : (filterSpvEl ? filterSpvEl.value : "");
-      var actualSpvFilter = isAdminGlobal ? selectedVal.trim().toLowerCase() : namaSpvGlobal.toLowerCase();
+      var actualSpvFilter = selectedVal.trim().toLowerCase();
 
       var waNo = getWaNumber(actualSpvFilter);
 
       if (waNo) {
-        // Jika SPV sudah dipilih di filter, langsung buka chat WA pribadi SPV tersebut
         var urlWa = "https://wa.me/" + waNo + "?text=" + encodeURIComponent(teksWaRingkasan7Hari);
         window.open(urlWa, "_blank");
       } else {
-        // Jika filter masih "Semua SPV", beri pilihan kirim ke WA (pilih kontak/grup) atau arahkan pilih SPV
         if (confirm("Filter saat ini masih 'Semua SPV'.\n\nKlik OK untuk lanjut membuka WhatsApp (pilih grup/kontak manual), atau klik Batal lalu pilih nama SPV di filter atas agar langsung menuju nomor SPV.")) {
           window.open("https://wa.me/?text=" + encodeURIComponent(teksWaRingkasan7Hari), "_blank");
         }
@@ -1962,7 +1995,7 @@
     }
 
     // ==========================================
-    // EXPIRED GOODS
+    // EXPIRED GOODS (LIHAT SEMUA, EDIT AREA SENDIRI)
     // ==========================================
 
     function handleExcelUpload() {
@@ -2094,7 +2127,7 @@
             
             if(row.statusTindakan === "Sudah Terjual" || row.statusTindakan === "Sudah Retur") continue;
             
-            if(selectedSpv !== "" && String(row.spv || "").toLowerCase().indexOf(selectedSpv) === -1) {
+            if(selectedSpv !== "" && !isSpvCocokFrontend(row.spv, selectedSpv)) {
                 continue;
             }
 
@@ -2126,25 +2159,40 @@
                 : '<span class="badge '+(isKritis ? 'bg-danger' : 'bg-warning text-dark')+' ms-2" style="font-size:0.6rem;">Kritis ('+item._diffDays+' Hari)</span>';
             
             var selBelum = item.statusTindakan === 'Belum Ditindak' ? 'selected' : '';
+            var bolehEditExp = isAdminGlobal || isSpvCocokFrontend(item.spv, namaSpvGlobal);
 
             html += '<tr class="'+classRow+'">';
             html += '<td class="ps-3"><div class="fw-bold text-dark" style="font-size:0.8rem;">'+(item.toko || '-')+'</div><div class="text-muted" style="font-size:0.7rem;">'+(item.spv || '-')+'</div></td>';
             html += '<td><div class="fw-bold text-primary" style="font-size:0.75rem;">'+(item.sku || '-')+'</div><div class="text-dark" style="font-size:0.75rem; max-width:200px; white-space:normal; line-height:1.2;">'+(item.product || '-')+'</div></td>';
             html += '<td class="fw-bold text-center">'+(item.qty || '0')+'</td>';
             html += '<td><div class="fw-semibold text-dark">'+(item.tglKadaluarsa || '-')+warningBadge+'</div></td>';
-            html += '<td class="pe-3"><select class="form-select form-select-sm border-0 shadow-sm fw-bold text-danger" onchange="updateStatusExpired(\''+item.id+'\', this.value)" style="width: 140px; font-size:0.75rem;"><option value="Belum Ditindak" '+selBelum+'>Belum Ditindak</option><option value="Sudah Retur">📦 Sudah Retur</option><option value="Sudah Terjual">✅ Sudah Terjual</option></select></td>';
+            if (bolehEditExp) {
+                html += '<td class="pe-3"><select class="form-select form-select-sm border-0 shadow-sm fw-bold text-danger" onchange="updateStatusExpired(\''+item.id+'\', this.value)" style="width: 140px; font-size:0.75rem;"><option value="Belum Ditindak" '+selBelum+'>Belum Ditindak</option><option value="Sudah Retur">📦 Sudah Retur</option><option value="Sudah Terjual">✅ Sudah Terjual</option></select></td>';
+            } else {
+                html += '<td class="pe-3 text-center"><span class="badge bg-secondary bg-opacity-10 text-secondary border px-2 py-1" style="font-size:0.7rem;"><i class="bi bi-lock-fill me-1"></i>Hanya Lihat</span></td>';
+            }
             html += '</tr>';
         }
         tbody.innerHTML = html;
     }
 
     function updateStatusExpired(idRow, newStatus) {
+        var targetItem = null;
         for(var i=0; i<cachedExpiredData.length; i++) {
             if(cachedExpiredData[i].id === idRow) {
-                cachedExpiredData[i].statusTindakan = newStatus;
+                targetItem = cachedExpiredData[i];
                 break;
             }
         }
+        if (!targetItem) return;
+
+        if (!isAdminGlobal && !isSpvCocokFrontend(targetItem.spv, namaSpvGlobal)) {
+            alert("Akses ditolak: Anda hanya bisa mengubah status barang expired milik area Anda sendiri.");
+            renderTabelExpired();
+            return;
+        }
+
+        targetItem.statusTindakan = newStatus;
         if(newStatus === "Sudah Terjual") { 
             showSuccessPopup("Disembunyikan", "Barang sudah terjual & dihapus dari pantauan."); 
         } else if(newStatus === "Sudah Retur") {
@@ -2153,8 +2201,9 @@
         renderTabelExpired(); 
         renderRingkasan7Hari();
         google.script.run.withFailureHandler(function(err){
-            console.error("Gagal update status expired ke server: " + err);
-        }).updateStatusAksiExpired(idRow, newStatus);
+            alert("Gagal update status expired: " + err);
+            loadExpiredData();
+        }).updateStatusAksiExpired(idRow, newStatus, namaSpvGlobal, isAdminGlobal);
     }
 
     function downloadExpiredExcel(opsi) {
@@ -2175,7 +2224,7 @@
         var barisNo = 1;
         for(var i=0; i<cachedExpiredData.length; i++) {
             var r = cachedExpiredData[i];
-            if(selectedSpv !== "" && String(r.spv || "").toLowerCase().indexOf(selectedSpv) === -1) continue; 
+            if(selectedSpv !== "" && !isSpvCocokFrontend(r.spv, selectedSpv)) continue; 
             
             var rowData = [barisNo, r.sku || "", r.product || "", r.qty || "", r.tglKadaluarsa || "", r.tglPelaporan || "", r.toko || "", r.spv || "", r.email || "", r.noHp || "", r.id || ""];
             if(opsi === 'lengkap') { rowData.push(r.statusTindakan || "Belum Ditindak"); }
@@ -2219,7 +2268,7 @@
       var todayKey = toDateKey(new Date()), statusHariIni = null;
       for (var i = 0; i < cachedLaporanHarian.length; i++) {
         var r = cachedLaporanHarian[i]; if (!r.tanggalKunjungan || !r.supervisor) continue;
-        if (r.supervisor.trim().toLowerCase() === String(namaSpv).trim().toLowerCase()) {
+        if (isSpvCocokFrontend(r.supervisor, namaSpv)) {
           if (toDateKey(parseDateSafe(r.tanggalKunjungan)) === todayKey) { statusHariIni = r.statusKehadiran; }
         }
       }
@@ -2262,7 +2311,7 @@
       var adaTarget = false;
       for (var j = 0; j < daftarSpvArea.length; j++) {
         var spvName = daftarSpvArea[j];
-        if (targetTugas !== "Semua SPV" && targetTugas.toLowerCase() !== spvName.toLowerCase()) { continue; }
+        if (targetTugas !== "Semua SPV" && !isSpvCocokFrontend(targetTugas, spvName)) { continue; }
         var ev = evaluasiStatusTugasUntukSpv(tugas, spvName);
         if (ev.targetTokoList.length > 0) {
             adaTarget = true;
@@ -2273,18 +2322,19 @@
     }
 
     function evaluasiStatusTugasUntukSpv(tugas, namaSpvTarget) {
-      if (!tugas || !listTokoGlobal || listTokoGlobal.length === 0) { return { isAllSelesai: false, selesaiCount: 0, prosesCount: 0, belumCount: 0, targetTokoList: [] }; }
+      var sumberTokoEval = allTokoAreaGlobal.length > 0 ? allTokoAreaGlobal : listTokoGlobal;
+      if (!tugas || !sumberTokoEval || sumberTokoEval.length === 0) { return { isAllSelesai: false, selesaiCount: 0, prosesCount: 0, belumCount: 0, targetTokoList: [] }; }
       var selesaiCount = 0, prosesCount = 0, belumCount = 0, targetTokoList = [];
       var detailTarget = String(tugas.detail || "").trim().toLowerCase();
       var kategoriTarget = String(tugas.kategori || "").trim().toLowerCase();
       var targetTokoTugas = tugas.targetToko || "Semua Toko";
 
-      for(var z=0; z<listTokoGlobal.length; z++) { 
-          if(listTokoGlobal[z].spvToko.toLowerCase() === namaSpvTarget.toLowerCase() || namaSpvTarget === namaSpvGlobal) { 
-              if (targetTokoTugas !== "Semua Toko" && listTokoGlobal[z].namaToko.toLowerCase() !== targetTokoTugas.toLowerCase() && listTokoGlobal[z].idToko.toLowerCase() !== targetTokoTugas.toLowerCase()) {
+      for(var z=0; z<sumberTokoEval.length; z++) { 
+          if(isSpvCocokFrontend(sumberTokoEval[z].spvToko, namaSpvTarget)) { 
+              if (targetTokoTugas !== "Semua Toko" && sumberTokoEval[z].namaToko.toLowerCase() !== targetTokoTugas.toLowerCase() && sumberTokoEval[z].idToko.toLowerCase() !== targetTokoTugas.toLowerCase()) {
                   continue; 
               }
-              targetTokoList.push(listTokoGlobal[z]); 
+              targetTokoList.push(sumberTokoEval[z]); 
           } 
       }
       
@@ -2308,7 +2358,7 @@
       for (var i = 0; i < activeTugasList.length; i++) {
         var t = activeTugasList[i];
         var targetTugas = t.target || "Semua SPV";
-        if (!isAdminGlobal && targetTugas !== "Semua SPV" && targetTugas.toLowerCase() !== namaSpvGlobal.toLowerCase()) { continue; }
+        if (!isAdminGlobal && targetTugas !== "Semua SPV" && !isSpvCocokFrontend(targetTugas, namaSpvGlobal)) { continue; }
         var ev = evaluasiStatusTugasUntukSpv(t, namaSpvGlobal);
         if (!ev.isAllSelesai && ev.targetTokoList.length > 0) { list.push({ indexAsli: i, tugas: t, evaluasi: ev }); }
       }
@@ -2328,7 +2378,7 @@
                  var tk = ev.targetTokoList[k], st = "Belum Selesai";
                  for (var r = cachedLaporanData.length - 1; r >= 0; r--) {
                     var lap = cachedLaporanData[r];
-                    if (String(lap.idToko).trim() === String(tk.idToko).trim() && String(lap.detail).trim().toLowerCase() === String(tugasBelumList[t].tugas.detail).trim().toLowerCase() && String(lap.kategori).trim().toLowerCase() === String(tugasBelumList[t].tugas.kategori).trim().toLowerCase()) { stToko = lap.status; break; }
+                    if (String(lap.idToko).trim() === String(tk.idToko).trim() && String(lap.detail).trim().toLowerCase() === String(tugasBelumList[t].tugas.detail).trim().toLowerCase() && String(lap.kategori).trim().toLowerCase() === String(tugasBelumList[t].tugas.kategori).trim().toLowerCase()) { st = lap.status; break; }
                  }
                  if(st !== "Sudah Selesai" && tokoBelumNames.indexOf(tk.namaToko) === -1) { tokoBelumNames.push(tk.namaToko); }
              }
@@ -2368,7 +2418,7 @@
       
       for (var j = 0; j < daftarSpvArea.length; j++) {
         var spvName = daftarSpvArea[j];
-        if (targetTugas !== "Semua SPV" && targetTugas.toLowerCase() !== spvName.toLowerCase()) { continue; }
+        if (targetTugas !== "Semua SPV" && !isSpvCocokFrontend(targetTugas, spvName)) { continue; }
 
         var ev = evaluasiStatusTugasUntukSpv(tugas, spvName);
         var boxHtml = "";
@@ -2501,7 +2551,9 @@
       var dashSpvEl = document.getElementById('dashFilterSpv');
       var rSpvEl = document.getElementById('filterSpv');
       var rawSpvFilter = (dashSpvEl && dashSpvEl.value !== undefined) ? dashSpvEl.value : (rSpvEl ? rSpvEl.value : "");
-      var actualSpvFilter = isAdminGlobal ? rawSpvFilter.trim().toLowerCase() : namaSpvGlobal.toLowerCase();
+      // Alur No. 3: Dashboard terbuka untuk semua SPV
+      var actualSpvFilter = rawSpvFilter.trim().toLowerCase();
+      var sumberTokoDash = allTokoAreaGlobal.length > 0 ? allTokoAreaGlobal : listTokoGlobal;
 
       for (var t = 0; t < activeTugasList.length; t++) {
         var tug = activeTugasList[t];
@@ -2523,17 +2575,17 @@
         var targetTugas = tug.target || "Semua SPV";
         var targetTokoTugas = tug.targetToko || "Semua Toko";
 
-        for (var i = 0; i < listTokoGlobal.length; i++) {
-          var tk = listTokoGlobal[i];
+        for (var i = 0; i < sumberTokoDash.length; i++) {
+          var tk = sumberTokoDash[i];
           var isValidSpv = false;
           for(var s=0; s<daftarSpvArea.length; s++) {
-             if(tk.spvToko.toLowerCase() === daftarSpvArea[s].toLowerCase()) { isValidSpv = true; break; }
+             if(isSpvCocokFrontend(tk.spvToko, daftarSpvArea[s])) { isValidSpv = true; break; }
           }
           if(!isValidSpv && tk.spvToko.toLowerCase().indexOf('admin') === -1) continue;
 
           if (tk.spvToko.toLowerCase().indexOf('admin') !== -1) continue;
-          if (actualSpvFilter !== "" && tk.spvToko.toLowerCase() !== actualSpvFilter) continue;
-          if (targetTugas !== "Semua SPV" && targetTugas.toLowerCase() !== tk.spvToko.toLowerCase()) continue;
+          if (actualSpvFilter !== "" && !isSpvCocokFrontend(tk.spvToko, actualSpvFilter)) continue;
+          if (targetTugas !== "Semua SPV" && !isSpvCocokFrontend(targetTugas, tk.spvToko)) continue;
           if (targetTokoTugas !== "Semua Toko" && tk.namaToko.toLowerCase() !== targetTokoTugas.toLowerCase() && tk.idToko.toLowerCase() !== targetTokoTugas.toLowerCase()) continue;
 
           var stToko = "Belum Selesai";
@@ -2560,7 +2612,7 @@
       var startStr = (dStartEl && dStartEl.value) ? dStartEl.value : (rStartEl ? rStartEl.value : '');
       var endStr = (dEndEl && dEndEl.value) ? dEndEl.value : (rEndEl ? rEndEl.value : '');
 
-var startDate = startStr ? parseDateSafe(startStr) : new Date(today.getFullYear(), today.getMonth(), 1);
+      var startDate = startStr ? parseDateSafe(startStr) : new Date(today.getFullYear(), today.getMonth(), 1);
       var rawEndDate = endStr ? parseDateSafe(endStr) : new Date(today.getTime());
       if (!startDate) startDate = new Date(today.getFullYear(), today.getMonth(), 1);
       if (!rawEndDate) rawEndDate = new Date(today.getTime());
@@ -2623,7 +2675,7 @@ var startDate = startStr ? parseDateSafe(startStr) : new Date(today.getFullYear(
       var rekapList = [], todayKey = toDateKey(today);
       for (var idx = 0; idx < daftarSpvArea.length; idx++) {
         var namaAsli = daftarSpvArea[idx], keyLower = namaAsli.toLowerCase();
-        if (actualSpvFilter !== "" && keyLower !== actualSpvFilter) continue;
+        if (actualSpvFilter !== "" && !isSpvCocokFrontend(keyLower, actualSpvFilter)) continue;
 
         var hadirCount = 0, liburCount = 0, alfaCount = 0, mapHari = mapAbsenSpvPerHari[keyLower] || {};
         for (var d = 0; d < daftarHariAktif.length; d++) {
@@ -2715,7 +2767,6 @@ var startDate = startStr ? parseDateSafe(startStr) : new Date(today.getFullYear(
               ketStatus = "ALFA (Belum Lapor)";
             }
           } else {
-            // Tanggal mendatang (tampilkan rencana jadwal tanpa menghitung Alfa)
             if (jdwCell) {
               txtCell = singkatTokoMatriks(jdwCell);
               if (jdwCell.toUpperCase() === "L") {
@@ -2782,7 +2833,7 @@ var startDate = startStr ? parseDateSafe(startStr) : new Date(today.getFullYear(
           var lap = cachedLaporanData[i];
           if (lap.status === 'Sudah Selesai' && lap.timestamp) {
               var spvKey = String(lap.supervisor).trim().toLowerCase();
-              if (actualSpvFilter !== "" && spvKey !== actualSpvFilter) continue;
+              if (actualSpvFilter !== "" && !isSpvCocokFrontend(spvKey, actualSpvFilter)) continue;
               if (speedData[spvKey]) {
                   var taskRilisDate = null;
                   for (var t = 0; t < activeTugasList.length; t++) {
@@ -2836,7 +2887,7 @@ var startDate = startStr ? parseDateSafe(startStr) : new Date(today.getFullYear(
           var lateCount = 0;
           for (var h = 0; h < cachedLaporanHarian.length; h++) {
               var row = cachedLaporanHarian[h];
-              if (actualSpvFilter !== "" && String(row.supervisor || "").trim().toLowerCase() !== actualSpvFilter) continue;
+              if (actualSpvFilter !== "" && !isSpvCocokFrontend(row.supervisor, actualSpvFilter)) continue;
               if (row.tanggalKunjungan === dateKey) {
                   var submitDate = parseDateSafe(row.timestamp);
                   var klaimDate = parseDateSafe(row.tanggalKunjungan);
@@ -2922,11 +2973,28 @@ var startDate = startStr ? parseDateSafe(startStr) : new Date(today.getFullYear(
     function loadHistory() {
       var isHarianView = document.getElementById('btnJenisHarian').checked;
       var isKasualView = document.getElementById('btnJenisKasual').checked;
-      
+      var dropFilterSpv = document.getElementById('filterSpv');
+
+      // Alur No. 4: Harian & Instruksi terbuka semua SPV; Kasual terkunci khusus area SPV sendiri
+      if (isKasualView && !isAdminGlobal) {
+        if (!dropFilterSpv.disabled) {
+          lastSpvFilterUmum = dropFilterSpv.value;
+        }
+        dropFilterSpv.value = namaSpvGlobal.toLowerCase();
+        dropFilterSpv.disabled = true;
+      } else {
+        if (dropFilterSpv.disabled) {
+          dropFilterSpv.disabled = false;
+          dropFilterSpv.value = lastSpvFilterUmum || "";
+        }
+      }
+
       var startStr = document.getElementById('filterStart').value, endStr = document.getElementById('filterEnd').value;
-      var filterSpv = document.getElementById('filterSpv').value; 
+      var filterSpv = dropFilterSpv.value;
       
-      var actualSpvFilter = isAdminGlobal ? filterSpv.toLowerCase() : namaSpvGlobal.toLowerCase();
+      var actualSpvFilter = isKasualView
+        ? (isAdminGlobal ? filterSpv.toLowerCase() : namaSpvGlobal.toLowerCase())
+        : filterSpv.toLowerCase();
 
       updateDashboardAndLeaderboard(); updateKontrolAdmin();
       renderRingkasan7Hari();
@@ -2941,11 +3009,11 @@ var startDate = startStr ? parseDateSafe(startStr) : new Date(today.getFullYear(
       if(isKasualView) {
           document.getElementById('historyContainer').innerHTML = '<div class="text-center py-5"><div class="spinner-border text-info mb-2" style="width: 3rem; height: 3rem;"></div><div class="fw-bold text-secondary">Sinkronisasi data kasual...</div></div>';
           google.script.run.withSuccessHandler(function(data) {
-              
               var secureData = [];
               var validStores = [];
               for (var i = 0; i < listTokoGlobal.length; i++) {
-                  if (actualSpvFilter && listTokoGlobal[i].spvToko.toLowerCase() !== actualSpvFilter) continue;
+                  if (isAdminGlobal && actualSpvFilter && !isSpvCocokFrontend(listTokoGlobal[i].spvToko, actualSpvFilter)) continue;
+                  if (!isAdminGlobal && !isSpvCocokFrontend(listTokoGlobal[i].spvToko, namaSpvGlobal)) continue;
                   validStores.push(listTokoGlobal[i].namaToko.toLowerCase());
               }
               for (var j = 0; j < data.length; j++) {
@@ -2970,7 +3038,7 @@ var startDate = startStr ? parseDateSafe(startStr) : new Date(today.getFullYear(
       if(isHarianView) {
         for (var i = 0; i < cachedLaporanHarian.length; i++) {
           if (!cachedLaporanHarian[i].tanggalKunjungan) continue;
-          if (actualSpvFilter !== "" && cachedLaporanHarian[i].supervisor.toLowerCase() !== actualSpvFilter) continue;
+          if (actualSpvFilter !== "" && !isSpvCocokFrontend(cachedLaporanHarian[i].supervisor, actualSpvFilter)) continue;
           var rDate = parseDateSafe(cachedLaporanHarian[i].tanggalKunjungan), pass = true;
           if (rDate) { if (sDate && rDate < sDate) pass = false; if (eDate && rDate > eDate) pass = false; }
           if (pass) filteredHistoryData.push(cachedLaporanHarian[i]);
@@ -3012,7 +3080,7 @@ var startDate = startStr ? parseDateSafe(startStr) : new Date(today.getFullYear(
       } else {
         for (var i = 0; i < cachedLaporanData.length; i++) {
           if (!cachedLaporanData[i].timestamp) continue;
-          if (actualSpvFilter !== "" && cachedLaporanData[i].supervisor.toLowerCase() !== actualSpvFilter) continue;
+          if (actualSpvFilter !== "" && !isSpvCocokFrontend(cachedLaporanData[i].supervisor, actualSpvFilter)) continue;
           var rDate = parseDateSafe(cachedLaporanData[i].timestamp), pass = true;
           if (rDate) { if (sDate && rDate < sDate) pass = false; if (eDate && rDate > eDate) pass = false; }
           if (pass) filteredHistoryData.push(cachedLaporanData[i]);
@@ -3100,7 +3168,7 @@ var startDate = startStr ? parseDateSafe(startStr) : new Date(today.getFullYear(
       
       var targetTokoList = [];
       for(var z=0; z<listTokoGlobal.length; z++) { 
-          if(listTokoGlobal[z].spvToko.toLowerCase() === namaSpvGlobal.toLowerCase()) { 
+          if(isSpvCocokFrontend(listTokoGlobal[z].spvToko, namaSpvGlobal)) { 
               if (targetTokoTugas !== "Semua Toko" && listTokoGlobal[z].namaToko.toLowerCase() !== targetTokoTugas.toLowerCase() && listTokoGlobal[z].idToko.toLowerCase() !== targetTokoTugas.toLowerCase()) { continue; }
               targetTokoList.push(listTokoGlobal[z]); 
           } 
@@ -3170,7 +3238,7 @@ var startDate = startStr ? parseDateSafe(startStr) : new Date(today.getFullYear(
       var isKasualView = document.getElementById('btnJenisKasual').checked;
       
       var filterSpv = document.getElementById('filterSpv').value; 
-      var actualSpvFilter = isAdminGlobal ? filterSpv : namaSpvGlobal;
+      var actualSpvFilter = (isKasualView && !isAdminGlobal) ? namaSpvGlobal : filterSpv;
       var spvNameForFile = actualSpvFilter ? actualSpvFilter.replace(/\s+/g, '_') : "Semua_Area";
 
       if (isKasualView) {
@@ -3350,8 +3418,23 @@ var startDate = startStr ? parseDateSafe(startStr) : new Date(today.getFullYear(
       XLSX.utils.book_append_sheet(wb, ws, "Laporan_Area");
       XLSX.writeFile(wb, fileName);
     }
-  // ========================================================
-    //  UNTUK ABSENSI KASUAL
+
+    // ========================================================
+    // DETAIL KLIK KOTAK MATRIKS KEHADIRAN + JADWAL SPV
+    // ========================================================
+    function tampilDetailMatriks(cellId) {
+      var info = window._matriksDetailMap ? window._matriksDetailMap[cellId] : null;
+      var box = document.getElementById('boxDetailMatriks');
+      if (!info || !box) return;
+      var html = '<strong><i class="bi bi-calendar-event text-danger me-1"></i>' + info.tgl + ' &bull; ' + info.spv + '</strong><br>';
+      html += 'Status: <b>' + info.status + '</b> &bull; Jadwal: <span class="text-primary fw-bold">' + info.jadwal + '</span> &bull; Aktual: <span class="text-success fw-bold">' + info.aktual + '</span>';
+      if (info.checklist) html += '<br><span class="text-muted">' + info.checklist + '</span>';
+      box.innerHTML = html;
+      box.classList.remove('d-none');
+    }
+
+    // ========================================================
+    // KAMERA LIVE IN-WEB UNTUK ABSENSI KASUAL
     // ========================================================
     var streamKameraKasual = null;
     var modeKameraKasual = 'user'; // 'user' = kamera depan, 'environment' = belakang
@@ -3481,16 +3564,6 @@ var startDate = startStr ? parseDateSafe(startStr) : new Date(today.getFullYear(
         resetKameraKasual();
       }
     });
-function tampilDetailMatriks(cellId) {
-      var info = window._matriksDetailMap ? window._matriksDetailMap[cellId] : null;
-      var box = document.getElementById('boxDetailMatriks');
-      if (!info || !box) return;
-      var html = '<strong><i class="bi bi-calendar-event text-danger me-1"></i>' + info.tgl + ' &bull; ' + info.spv + '</strong><br>';
-      html += 'Status: <b>' + info.status + '</b> &bull; Jadwal: <span class="text-primary fw-bold">' + info.jadwal + '</span> &bull; Aktual: <span class="text-success fw-bold">' + info.aktual + '</span>';
-      if (info.checklist) html += '<br><span class="text-muted">' + info.checklist + '</span>';
-      box.innerHTML = html;
-      box.classList.remove('d-none');
-    }
-</script>
+  </script>
 </body>
 </html>
