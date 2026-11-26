@@ -130,6 +130,39 @@
   </style>
 </head>
 <body>
+  <!-- NOTIFIKASI PINDAH URL OTOMATIS 5 DETIK (SPV & KASUAL) -->
+  <div id="notifPindahUrl" style="position: fixed; inset: 0; background: rgba(17, 24, 39, 0.94); backdrop-filter: blur(4px); z-index: 99999; display: flex; justify-content: center; align-items: center; padding: 20px;">
+    <div style="background: #ffffff; border-radius: 20px; padding: 28px 22px; width: 100%; max-width: 380px; text-align: center; box-shadow: 0 20px 45px rgba(0,0,0,0.4); border-top: 6px solid #b91c1c;">
+      <div style="width: 64px; height: 64px; background: #fef2f2; color: #b91c1c; border-radius: 50%; display: inline-flex; justify-content: center; align-items: center; font-size: 2rem; margin-bottom: 14px;">
+        <i class="bi bi-megaphone-fill"></i>
+      </div>
+      <h5 class="fw-bold text-dark mb-2">Halaman Sudah Pindah!</h5>
+      <p class="text-muted small mb-3">
+        Mulai sekarang, <strong>Portal SPV</strong> dan <strong>Absensi Kasual</strong> menggunakan alamat web baru.<br>
+        Otomatis berpindah dalam <strong id="hitungMundurPindah" class="text-danger fs-5">5</strong> detik...
+      </p>
+
+      <a href="https://web-store-niceso.vercel.app/" class="btn btn-danger w-100 py-3 fw-bold rounded-3 shadow-sm mb-2">
+        <i class="bi bi-box-arrow-up-right me-2"></i>Pindah Sekarang
+      </a>
+      <div class="text-muted" style="font-size: 0.72rem;">Simpan / bookmark alamat baru setelah berpindah.</div>
+    </div>
+  </div>
+  <script>
+    (function() {
+      var sisaDetik = 5;
+      var urlBaru = "https://web-store-niceso.vercel.app/";
+      var elAngka = document.getElementById("hitungMundurPindah");
+      var timer = setInterval(function() {
+        sisaDetik--;
+        if (elAngka && sisaDetik >= 0) elAngka.innerText = sisaDetik;
+        if (sisaDetik <= 0) {
+          clearInterval(timer);
+          window.location.replace(urlBaru);
+        }
+      }, 1000);
+    })();
+  </script>
 
   <div id="universalSuccessOverlay" class="success-overlay print-hide">
       <div class="success-card-box">
